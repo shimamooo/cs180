@@ -26,6 +26,8 @@ I implemented Normalized Cross-Correlation by flattening the images, normalizing
 
 The brute force search took far too long to run for the large images, which had 4-digit dimensions. I implemented an image pyramid to speed up and improve the search. I repeatedly downsampled the image by a factor of 2 until I reached a base case of a small enough image to brute force. Notice that a displacement of 30 pixels is actually quite expressive at this size - it would make a minute difference in the original large image. Then I aligned the images one by one, making my estimate of the displacement more fine-grained each time.
 
+Since I was still using for loops, the code took 3 minutes to run per image. After vectorizing, the code took just a few seconds to run per image.
+
 Surprisingly, this approach was able to find the correct displacements for all the large images.
 
 ### Church
