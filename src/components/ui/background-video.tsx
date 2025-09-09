@@ -15,8 +15,8 @@ export function BackgroundVideo() {
     let currentX = 0;
     let currentY = 0;
 
-    const maxTranslate = 60; // px
-    const scale = 1.08;
+    const maxTranslate = 160; // px
+    const scale = 1.18;
     const ease = 0.18;
 
     const onMouseMove = (e: MouseEvent) => {

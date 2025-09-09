@@ -55,19 +55,6 @@ export default function RootLayout({
         >
           <BackgroundVideo />
           {children}
-          <div className="fixed inset-x-0 bottom-4 z-10 flex justify-center">
-            <div className="rounded-full bg-black/40 px-3 py-1 text-xs text-gray-200 backdrop-blur-sm">
-              Video by{" "}
-              <Link
-                href="https://www.youtube.com/@AmbientRenders"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2 hover:text-white"
-              >
-                Ambient Renders
-              </Link>
-            </div>
-          </div>
         </ThemeProvider>
       </body>
     </html>

@@ -1,0 +1,119 @@
+## Small images
+
+I implemented Normalized Cross-Correlation by flattening the images, normalizing them, and then taking the dot product. Next, I worried that the inconsistent borders of the images would affect the results, so I cropped the images by 10% on each side. Finally, I implemented a naive brute-force search over a 60x60 grid (x, y values between -30 and 30) and returned the displacement that resulted in the highest correlation.
+
+- green: (dx, dy), red: (dx, dy)
+
+### Cathedral
+
+![image](/cs180/proj1/cathedral.jpg)
+
+- (2,5), (3,12)
+
+### Monastery
+
+![image](/cs180/proj1/monastery.jpg)
+
+- (2,-3), (2,3)
+
+### Tobolsk
+
+![image](/cs180/proj1/tobolsk.jpg)
+
+- (2,3), (3,6)
+
+## Large images
+
+The brute force search took far too long to run for the large images, which had 4-digit dimensions. I implemented an image pyramid to speed up and improve the search. I repeatedly downsampled the image by a factor of 2 until I reached a base case of a small enough image to brute force. Notice that a displacement of 30 pixels is actually quite expressive at this size - it would make a minute difference in the original large image. Then I aligned the images one by one, making my estimate of the displacement more fine-grained each time.
+
+Surprisingly, this approach was able to find the correct displacements for all the large images.
+
+### Church
+
+![image](/cs180/proj1/church.jpg)
+
+- (3,24), (-3,58)
+
+### Emir
+
+![image](/cs180/proj1/emir.jpg)
+
+- (24,48), (41,107)
+
+### Harvesters
+
+![image](/cs180/proj1/harvesters.jpg)
+
+- (17,61), (12,120)
+
+### Icon
+
+![image](/cs180/proj1/icon.jpg)
+
+- (16,40), (24,88)
+
+### Italil
+
+![image](/cs180/proj1/italil.jpg)
+
+- (22,39), (35,77)
+
+### Lastochikino
+
+![image](/cs180/proj1/lastochikino.jpg)
+
+- (-1,-2), (-8,75)
+
+### Lugano
+
+![image](/cs180/proj1/lugano.jpg)
+
+- (-17,40), (-29,93)
+
+### Melons
+
+![image](/cs180/proj1/melons.jpg)
+
+- (9,80), (14,176)
+
+### Self Portrait
+
+![image](/cs180/proj1/self_portrait.jpg)
+
+- (30,78), (37,174)
+
+### Siren
+
+![image](/cs180/proj1/siren.jpg)
+
+- (-6,49), (-24,96)
+
+### Three Generations
+
+![image](/cs180/proj1/three_generations.jpg)
+
+- (13,56), (9,113)
+
+## My own images
+
+I chose a few interesting images from the Prokudin-Gorskii collection to test on!
+
+### Kurmy
+
+![image](/cs180/proj1/kurmy.jpg)
+
+- (-18,25), (-38,115)
+
+### Stone Gate
+
+![image](/cs180/proj1/stone_gate.jpg)
+
+- (3,34), (5,96)
+
+### Brick
+
+![image](/cs180/proj1/brick.jpg)
+
+- (9,72), (-30,168)
+
+My algorithm was able to successfully align all the images I tested on.
