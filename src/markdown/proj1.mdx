@@ -4,7 +4,7 @@ Sergei Mikhailovich Prokudin-Gorskii, a Russian chemist and photographer, pionee
 
 - An example of a stitched negative, with the blue, green, and red exposures stacked on top of each other.
 
-What should we do? Well, the basic idea is to partition the stitched negative into 3 images, one for each channel. Then, we choose one channel as the reference (in this case, the blue channel) and align the other two channels to the reference. The algorithm should return the optimal shift for the red and green channels. Finally, we will apply these shifts and then stack the aligned red and green channels on top of the blue channel to form a full-color image.
+What should our approch be? Well, the basic idea is to partition the stitched negative into 3 images, one for each channel. Then, we choose one channel as the reference (in this case, the blue channel) and align the other two channels to the reference. The algorithm should return the optimal shift for the red and green channels. Finally, we will apply these shifts and then stack the aligned red and green channels on top of the blue channel to form a full-color image.
 
 ## Small images
 
@@ -129,7 +129,7 @@ Surprisingly, this approach was able to find the correct displacements for most 
 
 ## Emir
 
-Eeryone but Emir was successfully aligned. This image is particularly difficult because of his outfit:
+Everyone but Emir was successfully aligned. This image is particularly difficult because of his outfit:
 
 ![image](/cs180/proj1/emir_channels.jpg)
 
@@ -141,7 +141,7 @@ Naively using the blue channel as the reference channel leads to very poor align
 
 - green shift: (25,48), red shift: (-296,92)
 
-Instead, we should use the green channel as the reference channel. This way, we are more likely to align the extreme channels with it.
+Instead, we should use the moderate green channel as the reference channel. This way, we are more likely to align the extreme channels with it.
 
 Indeed, when we use the green channel as the reference channel, we get a much better alignment:
 
@@ -149,11 +149,13 @@ Indeed, when we use the green channel as the reference channel, we get a much be
 
 - blue shift: (-25,-48), red shift: (16,55)
 
-And as expected, the optimal blue shift here is the negative of the optimal green shift from when we used the blue channel as the reference channel.
+And as a sanity check, the optimal blue shift here is the negative of the optimal green shift from when we used the blue channel as the reference channel. This is expected because NCC is symmetric.
 
-## Runtime
+## Miscellaneous
 
 All large images were able to be aligned in under 40 seconds.
+
+This blog is made using a special flavor of Markdown called MDX. Theoretically, I should be able to embed React components in this blog, but I was unable to get it working due to crippling frontend skill issue. Hopefully by the next project I will be able to figure it out!
 
 ## My own images
 
