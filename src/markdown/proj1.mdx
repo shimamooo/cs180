@@ -4,15 +4,27 @@ Sergei Mikhailovich Prokudin-Gorskii, a Russian chemist and photographer, pionee
 
 - An example of a stitched negative, with the blue, green, and red exposures stacked on top of each other.
 
+What should we do? Well, the basic idea is to partition the stitched negative into 3 images, one for each channel. Then, we choose one channel as the reference (in this case, the blue channel) and align the other two channels to the reference. The algorithm should return the optimal shift for the red and green channels. Finally, we will apply these shifts and then stack the aligned red and green channels on top of the blue channel to form a full-color image.
+
 ## Small images
 
 My first idea was to minimize the Euclidean distance between the pixels of the two channels. However, some initial testing seemed to indicate that maximizing the Normalized Cross-Correlation (NCC) score led to slightly better alignments.
 
-Thus, I implemented NCC. Both approaches involved flattening the images into one dimensional arrays. In the case of NCC, I also normalized the arrays before taking the dot product.
+Thus, I implemented NCC. Both approaches involved flattening the images into one dimensional arrays. In the case of NCC, I also normalized the arrays and then took the dot product.
+
+### Preprocessing
 
 Next, I worried that the inconsistent borders of the images would affect the results, so I cropped the images by 10% on each side. 10% seemed like a good number because it fully cropped out the borders of all the images tested.
 
-Finally, I implemented a naive brute-force search over a 60x60 grid (x, y values between -30 and 30) and returned the displacement that resulted in the highest correlation.
+### Algorithm
+
+The basic algorithm is as follows:
+
+The inputs to the `align` function are two images, `img1` and `img2`. The output is the optimal shift (dx, dy) that maximizes the NCC score.
+
+img2 is the reference channel, while img1 is the channel we are aligning to the reference. Following the approach described above, we will need to call align(red, blue) and align(green, blue).
+
+I implemented a brute-force search over a 30x30 grid (x, y values between -15 and 15) and keep track of the current best shift. We return the displacement that resulted in the highest NCC score.
 
 The following ordering will be used for the optimal shifts outputted by my algorithm:
 
@@ -34,85 +46,114 @@ The following ordering will be used for the optimal shifts outputted by my algor
 
 ![image](/cs180/proj1/tobolsk.jpg)
 
-- (2,3), (3,6)
+- (3,3), (3,6)
 
 ## Large images
 
-The brute force search took far too long to run for the large images, which had 4-digit dimensions.
+The naive `align` implementation fails for the large .tif images, which have 4-digit dimensions. The reason is because the displacements are often much larger than the 30x30 grid. Increasing the size of the grid search is not a viable solution because the runtime of the naive implementation is quadratic in the size of the image and takes too long to run.
 
-I implemented an image pyramid to speed up and improve the search. This approach repeatedly downsamples the image by a factor of 2 until we reach a base case of a sufficiently small image; I chose 400 pixels for one dimension, which seemed reasonable to brute force with my existing `align` function.
+Instead, we implement an image pyramid to speed up and improve the search. This approach repeatedly downsamples the image by a factor of 2 until we reach a base case of a sufficiently small image; I chose 300 pixels for one dimension, which seemed reasonable to brute force with the existing `align` function.
 
-Notice that a displacement of 30 pixels is actually quite expressive at the coarsest image. Such a shift would make a minute difference in the original large image. This is important because we can use the `align` function on the smallest image first, providing an initial estimate of the displacement. We can then use this estimate to align the next largest image (being sure to apply the displacement we just found), and so on. Thus, each estimate gets more and more fine-grained, leading to not only a much more efficient search, but also a more accurate one.
+Notice that a displacement of 30 pixels is actually quite expressive at the coarsest level. This is important because we can use the `align` function on the smallest image first, providing an initial estimate of the displacement. Then, we can use this estimate to align the next largest image (being sure to apply the displacement we just found), and so on. Each estimate gets more and more fine-grained, leading to not only a much more efficient search, but also a more accurate one.
 
-It is important to correctly calculate the displacement for each image before calling `align` on the next largest image. Because we downscaled by factors of 2, we need to multiply the displacement by 2 for each level of the pyramid.
+It is important to correctly calculate the displacement for each image before calling `align` on the next largest image. Because we downscaled by factors of 2, we also need to multiply the displacement by 2 for each level of the pyramid.
 
-Surprisingly, this approach was able to find the correct displacements for all the large images.
+Surprisingly, this approach was able to find the correct displacements for most of the large images.
 
 ### Church
 
 ![image](/cs180/proj1/church.jpg)
 
-- (3,24), (-3,58)
+- (3,24), (-5,57)
 
 ### Emir
 
-![image](/cs180/proj1/emir.jpg)
+![image](/cs180/proj1/emir-naive.jpg)
 
-- (24,48), (41,107)
+- (25,48), (-296,92)
+- Red alignment is messed up, hmmm...
 
 ### Harvesters
 
 ![image](/cs180/proj1/harvesters.jpg)
 
-- (17,61), (12,120)
+- (16,60), (14,124)
 
 ### Icon
 
 ![image](/cs180/proj1/icon.jpg)
 
-- (16,40), (24,88)
+- (16,41), (22,90)
 
 ### Italil
 
 ![image](/cs180/proj1/italil.jpg)
 
-- (22,39), (35,77)
+- (20,37), (35,76)
 
 ### Lastochikino
 
 ![image](/cs180/proj1/lastochikino.jpg)
 
-- (-1,-2), (-8,75)
+- (-1,-2), (-7,73)
 
 ### Lugano
 
 ![image](/cs180/proj1/lugano.jpg)
 
-- (-17,40), (-29,93)
+- (-16,39), (-29,92)
 
 ### Melons
 
 ![image](/cs180/proj1/melons.jpg)
 
-- (9,80), (14,176)
+- (8,81), (12,178)
 
 ### Self Portrait
 
 ![image](/cs180/proj1/self_portrait.jpg)
 
-- (30,78), (37,174)
+- (29,79), (36,176)
 
 ### Siren
 
 ![image](/cs180/proj1/siren.jpg)
 
-- (-6,49), (-24,96)
+- (-6,48), (-23,96)
 
 ### Three Generations
 
 ![image](/cs180/proj1/three_generations.jpg)
 
-- (13,56), (9,113)
+- (14,53), (11,112)
+
+## Emir
+
+Eeryone but Emir was successfully aligned. This image is particularly difficult because of his outfit:
+
+![image](/cs180/proj1/emir_channels.jpg)
+
+As we see, the blue, green, and red channels have significant differences in the dress region. The blue channel is very intense in this region, while the red channel is the opposite (indeed, the dress appears to be a vivid turquoise color). The green channel lies in between.
+
+Naively using the blue channel as the reference channel leads to very poor alignment with the red channel due to low correlation in the dress region, as demonstrated from the previous results:
+
+![image](/cs180/proj1/emir_naive.jpg)
+
+- green shift: (25,48), red shift: (-296,92)
+
+Instead, we should use the green channel as the reference channel. This way, we are more likely to align the extreme channels with it.
+
+Indeed, when we use the green channel as the reference channel, we get a much better alignment:
+
+![image](/cs180/proj1/emir.jpg)
+
+- blue shift: (-25,-48), red shift: (16,55)
+
+And as expected, the optimal blue shift here is the negative of the optimal green shift from when we used the blue channel as the reference channel.
+
+## Runtime
+
+All large images were able to be aligned in under 40 seconds.
 
 ## My own images
 
