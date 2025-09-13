@@ -46,8 +46,6 @@ Notice that a displacement of 30 pixels is actually quite expressive at the coar
 
 It is important to correctly calculate the displacement for each image before calling `align` on the next largest image. Because we downscaled by factors of 2, we need to multiply the displacement by 2 for each level of the pyramid.
 
-Since I was still using for loops in code that depended on the dimensions of the image runtime-wise, the code took 3 minutes to run per image. After vectorizing, the code took just a few seconds to run per image.
-
 Surprisingly, this approach was able to find the correct displacements for all the large images.
 
 ### Church
