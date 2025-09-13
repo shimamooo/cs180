@@ -1,6 +1,20 @@
+Sergei Mikhailovich Prokudin-Gorskii, a Russian chemist and photographer, pioneered color photography in the early 20th century by capturing three exposures of each scene on glass plates through red, green, and blue filters, with the vision of combining them into full-color images. After leaving Russia in 1918, his collection was acquired by the Library of Congress and later digitized. Our goal is to transform these stitched negatives—images containing the three stacked exposures—into aligned, artifact-free color photographs.
+
+![image](/cs180/cathedral.jpg)
+
+- An example of a stitched negative, with the blue, green, and red exposures stacked on top of each other.
+
 ## Small images
 
-I implemented Normalized Cross-Correlation by flattening the images, normalizing them, and then taking the dot product. Next, I worried that the inconsistent borders of the images would affect the results, so I cropped the images by 10% on each side. Finally, I implemented a naive brute-force search over a 60x60 grid (x, y values between -30 and 30) and returned the displacement that resulted in the highest correlation.
+My first idea was to minimize the Euclidean distance between the pixels of the two channels. However, some initial testing seemed to indicate that maximizing the Normalized Cross-Correlation (NCC) score led to slightly better alignments.
+
+Thus, I implemented NCC. Both approaches involved flattening the images into one dimensional arrays. In the case of NCC, I also normalized the arrays before taking the dot product.
+
+Next, I worried that the inconsistent borders of the images would affect the results, so I cropped the images by 10% on each side. 10% seemed like a good number because it fully cropped out the borders of all the images tested.
+
+Finally, I implemented a naive brute-force search over a 60x60 grid (x, y values between -30 and 30) and returned the displacement that resulted in the highest correlation.
+
+The following ordering will be used for the optimal shifts outputted by my algorithm:
 
 - green: (dx, dy), red: (dx, dy)
 
@@ -24,9 +38,15 @@ I implemented Normalized Cross-Correlation by flattening the images, normalizing
 
 ## Large images
 
-The brute force search took far too long to run for the large images, which had 4-digit dimensions. I implemented an image pyramid to speed up and improve the search. I repeatedly downsampled the image by a factor of 2 until I reached a base case of a small enough image to brute force. Notice that a displacement of 30 pixels is actually quite expressive at this size - it would make a minute difference in the original large image. Then I aligned the images one by one, making my estimate of the displacement more fine-grained each time.
+The brute force search took far too long to run for the large images, which had 4-digit dimensions.
 
-Since I was still using for loops, the code took 3 minutes to run per image. After vectorizing, the code took just a few seconds to run per image.
+I implemented an image pyramid to speed up and improve the search. This approach repeatedly downsamples the image by a factor of 2 until we reach a base case of a sufficiently small image; I chose 400 pixels for one dimension, which seemed reasonable to brute force with my existing `align` function.
+
+Notice that a displacement of 30 pixels is actually quite expressive at the coarsest image. Such a shift would make a minute difference in the original large image. This is important because we can use the `align` function on the smallest image first, providing an initial estimate of the displacement. We can then use this estimate to align the next largest image (being sure to apply the displacement we just found), and so on. Thus, each estimate gets more and more fine-grained, leading to not only a much more efficient search, but also a more accurate one.
+
+It is important to correctly calculate the displacement for each image before calling `align` on the next largest image. Because we downscaled by factors of 2, we need to multiply the displacement by 2 for each level of the pyramid.
+
+Since I was still using for loops in code that depended on the dimensions of the image runtime-wise, the code took 3 minutes to run per image. After vectorizing, the code took just a few seconds to run per image.
 
 Surprisingly, this approach was able to find the correct displacements for all the large images.
 

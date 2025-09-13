@@ -33,7 +33,9 @@ export default function ProjectsPage() {
 
         {/* Header section */}
         <div className="mb-16">
-          <h1 className="mb-4 text-4xl font-light text-white">Project 1</h1>
+          <h1 className="mb-4 text-4xl font-light text-white">
+            Coloring the Prokudin-Gorskii Collection
+          </h1>
           <div className="h-px w-16 bg-neutral-800" />
         </div>
 
