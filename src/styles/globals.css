@@ -692,7 +692,7 @@
 @utility arrow {
   position: relative;
   top: 0;
-  @apply h-[14px] w-[14px] rounded-tl-sm border-t border-l border-gray-700 bg-gray-700/80 sm:h-4 sm:w-4 sm:rounded-tl-[3px] md:rounded-tl-[4px] lg:h-5 lg:w-5 lg:rounded-tl-md;
+  @apply h-[14px] w-[14px] rounded-tl-sm border-l border-t border-gray-700 bg-gray-700/80 sm:h-4 sm:w-4 sm:rounded-tl-[3px] md:rounded-tl-[4px] lg:h-5 lg:w-5 lg:rounded-tl-md;
   transform: rotate(45deg);
 }
 
@@ -781,7 +781,7 @@
 }
 
 @utility blog-image {
-  @apply shadow-border bg-gray-900/25 backdrop-blur-xs;
+  @apply shadow-border backdrop-blur-xs bg-gray-900/25;
   content: "";
   width: 100%;
   height: 100%;
