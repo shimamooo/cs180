@@ -4,6 +4,9 @@ import { bundleMDX } from "mdx-bundler";
 import { NextResponse } from "next/server";
 import rehypeStarryNight from "rehype-starry-night";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 // Fix for Next.js esbuild ENOENT issue
 if (process.platform === "win32") {
   process.env.ESBUILD_BINARY_PATH = path.join(

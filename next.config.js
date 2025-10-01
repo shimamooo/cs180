@@ -11,6 +11,14 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  webpack: (config) => {
+    // Ensure markdown files are bundled and readable in serverless output
+    config.module.rules.push({
+      test: /\.mdx?$/,
+      type: "asset/source",
+    });
+    return config;
+  },
 };
 
 const withMDX = createMDX({
