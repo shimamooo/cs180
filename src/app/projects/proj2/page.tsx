@@ -105,15 +105,6 @@ export default function Project2Page() {
             />
           )}
         </div>
-
-        {/* Footer */}
-        <div className="mt-20 border-t border-neutral-800 pt-8">
-          <div className="text-center">
-            <p className="text-sm font-light text-neutral-500">
-              Powered by mdx-bundler
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
