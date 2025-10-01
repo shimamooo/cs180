@@ -1,5 +1,3 @@
-"use client";
-
 import Proj0 from "~/markdown/proj0.mdx";
 import Link from "next/link";
 
